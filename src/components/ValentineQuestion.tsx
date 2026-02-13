@@ -1,23 +1,63 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 
 interface ValentineQuestionProps {
   onYes: () => void;
 }
 
-type TrickMode = "runaway" | "dropdown" | "tiny" | "expand-yes";
-const TRICKS: TrickMode[] = ["runaway", "dropdown", "tiny", "expand-yes"];
+type TrickMode =
+  | "runaway"
+  | "dropdown"
+  | "tiny"
+  | "expand-yes"
+  | "disappear"
+  | "spin-away"
+  | "swap-text"
+  | "melt";
+
+const ALL_TRICKS: TrickMode[] = [
+  "runaway",
+  "dropdown",
+  "tiny",
+  "expand-yes",
+  "disappear",
+  "spin-away",
+  "swap-text",
+  "melt",
+];
+
+const SWAP_TEXTS = [
+  "Okay fine, Yes 💖",
+  "I meant Yes!",
+  "Yes (pretending to be No)",
+  "Also Yes 💕",
+  "Yes but shy",
+  "Yes in disguise 🥸",
+];
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
+  const trickOrder = useMemo(() => shuffle(ALL_TRICKS), []);
   const [trickIndex, setTrickIndex] = useState(0);
   const [noPosition, setNoPosition] = useState({ x: 0, y: 0 });
   const [noScale, setNoScale] = useState(1);
   const [yesScale, setYesScale] = useState(1);
+  const [noOpacity, setNoOpacity] = useState(1);
+  const [noRotation, setNoRotation] = useState(0);
+  const [noText, setNoText] = useState("No 😢");
+  const [noSkewY, setNoSkewY] = useState(0);
   const [visible, setVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const noRef = useRef<HTMLButtonElement>(null);
 
-  const currentTrick = TRICKS[trickIndex % TRICKS.length];
+  const currentTrick = trickOrder[trickIndex % trickOrder.length];
 
   useEffect(() => {
     setTimeout(() => setVisible(true), 100);
@@ -33,7 +73,9 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
   }, []);
 
   const handleNoInteraction = useCallback(() => {
-    switch (currentTrick) {
+    const trick = trickOrder[trickIndex % trickOrder.length];
+
+    switch (trick) {
       case "runaway":
         setNoPosition(getRandomPosition());
         break;
@@ -41,16 +83,39 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
         setNoPosition({ x: 0, y: 300 });
         break;
       case "tiny":
-        setNoScale((prev) => prev * 0.5);
+        setNoScale((prev) => prev * 0.4);
         setYesScale((prev) => Math.min(prev * 1.3, 3));
         break;
       case "expand-yes":
         setYesScale((prev) => Math.min(prev * 1.5, 4));
         setNoScale((prev) => prev * 0.3);
         break;
+      case "disappear":
+        setNoOpacity(0);
+        setTimeout(() => {
+          setNoPosition(getRandomPosition());
+          setNoOpacity(1);
+          setNoScale(0.6);
+        }, 800);
+        break;
+      case "spin-away":
+        setNoRotation((prev) => prev + 720);
+        setNoPosition(getRandomPosition());
+        setNoScale((prev) => prev * 0.7);
+        break;
+      case "swap-text":
+        setNoText(SWAP_TEXTS[Math.floor(Math.random() * SWAP_TEXTS.length)]);
+        setYesScale((prev) => Math.min(prev * 1.2, 3));
+        break;
+      case "melt":
+        setNoSkewY(40);
+        setNoScale((prev) => prev * 0.5);
+        setNoPosition((prev) => ({ ...prev, y: prev.y + 100 }));
+        setTimeout(() => setNoSkewY(0), 600);
+        break;
     }
     setTrickIndex((prev) => prev + 1);
-  }, [currentTrick, getRandomPosition]);
+  }, [trickIndex, trickOrder, getRandomPosition]);
 
   return (
     <div
@@ -83,12 +148,13 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
           </Button>
 
           <Button
-            ref={noRef}
             variant="outline"
             size="lg"
-            className="text-xl px-10 py-7 transition-all duration-300 border-muted-foreground/30"
+            className="text-xl px-10 py-7 border-muted-foreground/30"
             style={{
-              transform: `translate(${noPosition.x}px, ${noPosition.y}px) scale(${noScale})`,
+              transform: `translate(${noPosition.x}px, ${noPosition.y}px) scale(${noScale}) rotate(${noRotation}deg) skewY(${noSkewY}deg)`,
+              opacity: noOpacity,
+              transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
               position: "relative",
               zIndex: 5,
             }}
@@ -99,7 +165,7 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
               handleNoInteraction();
             }}
           >
-            No 😢
+            {noText}
           </Button>
         </div>
       </div>
