@@ -69,11 +69,11 @@ const Celebration = () => {
         </p>
 
         {/* Photo */}
-        <div className="w-72 h-72 rounded-2xl overflow-hidden border-4 border-primary/30 shadow-lg shadow-primary/20 mt-4 animate-bounce-in flex items-center justify-center bg-secondary" style={{ animationDelay: "0.4s" }}>
+        <div className="w-full max-w-2xl rounded-2xl overflow-hidden border-4 border-primary/30 shadow-lg shadow-primary/20 mt-4 animate-bounce-in flex items-center justify-center bg-secondary" style={{ animationDelay: "0.4s" }}>
           <img
             src={picImage}
             alt="Us together"
-            className="w-full h-full object-contain"
+            className="w-full h-auto object-contain"
           />
         </div>
         <p className="text-sm text-muted-foreground italic flex items-center gap-1">
