@@ -70,7 +70,7 @@ const Celebration = () => {
         {/* Placeholder photo */}
         <div className="w-72 h-72 rounded-2xl overflow-hidden border-4 border-primary/30 shadow-lg shadow-primary/20 mt-4 animate-bounce-in" style={{ animationDelay: "0.4s" }}>
           <img
-            src="/placeholder.svg"
+            src="/pic.png"
             alt="Us together"
             className="w-full h-full object-cover bg-secondary"
           />

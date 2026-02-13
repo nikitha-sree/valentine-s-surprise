@@ -6,7 +6,7 @@ import Celebration from "@/components/Celebration";
 
 type Screen = "splash" | "question" | "celebration";
 
-const PASSPHRASE = "iloveyou";
+const PASSPHRASE = "tagoochimogunnibeltthokodatha";
 
 const Index = () => {
   const [screen, setScreen] = useState<Screen>("splash");
