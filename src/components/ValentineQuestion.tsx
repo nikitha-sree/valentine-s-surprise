@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
+import { Heart, HeartCrack, Sparkles } from "lucide-react";
 
 interface ValentineQuestionProps {
   onYes: () => void;
@@ -27,12 +28,12 @@ const ALL_TRICKS: TrickMode[] = [
 ];
 
 const SWAP_TEXTS = [
-  "Okay fine, Yes 💖",
+  "Okay fine, Yes",
   "I meant Yes!",
   "Yes (pretending to be No)",
-  "Also Yes 💕",
+  "Also Yes",
   "Yes but shy",
-  "Yes in disguise 🥸",
+  "Yes in disguise",
 ];
 
 function shuffle<T>(arr: T[]): T[] {
@@ -64,11 +65,18 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
   }, []);
 
   const getRandomPosition = useCallback(() => {
-    const maxX = window.innerWidth - 120;
-    const maxY = window.innerHeight - 60;
+    if (!containerRef.current) return { x: 0, y: 0 };
+    const btn = containerRef.current.querySelector('[data-no-btn]') as HTMLElement;
+    if (!btn) return { x: 0, y: 0 };
+    const rect = btn.getBoundingClientRect();
+    const padding = 20;
+    const maxX = window.innerWidth - rect.width - padding;
+    const maxY = window.innerHeight - rect.height - padding;
+    const targetX = Math.random() * maxX + padding;
+    const targetY = Math.random() * maxY + padding;
     return {
-      x: Math.random() * maxX - maxX / 2,
-      y: Math.random() * maxY - maxY / 2,
+      x: targetX - rect.left,
+      y: targetY - rect.top,
     };
   }, []);
 
@@ -130,7 +138,7 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
       }`}
     >
       <div className="flex flex-col items-center gap-8 max-w-lg">
-        <span className="text-7xl animate-bounce-in">💝</span>
+        <Heart className="w-16 h-16 text-primary fill-primary animate-bounce-in" />
         <h1
           className="text-4xl md:text-5xl font-bold text-foreground text-center leading-tight"
           style={{ animationDelay: "0.2s" }}
@@ -138,8 +146,8 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
           Will you be my{" "}
           <span className="text-gradient">Valentine?</span>
         </h1>
-        <p className="text-muted-foreground text-center">
-          Choose wisely... there's really only one correct answer 😏
+        <p className="text-muted-foreground text-center flex items-center gap-1 justify-center">
+          Choose wisely... there's really only one correct answer <Sparkles className="w-4 h-4 text-accent" />
         </p>
 
         <div className="flex items-center gap-6 mt-4 relative">
@@ -149,12 +157,13 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
             className="text-xl px-10 py-7 transition-transform duration-300"
             style={{ transform: `scale(${yesScale})`, zIndex: 10 }}
           >
-            Yes! 💖
+            <Heart className="w-5 h-5 fill-current" /> Yes!
           </Button>
 
           <Button
             variant="outline"
             size="lg"
+            data-no-btn
             className="text-xl px-10 py-7 border-muted-foreground/30"
             style={{
               transform: `translate(${noPosition.x}px, ${noPosition.y}px) scale(${noScale}) rotate(${noRotation}deg) skewY(${noSkewY}deg)`,
@@ -170,7 +179,7 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
               handleNoInteraction();
             }}
           >
-            {noText}
+            <HeartCrack className="w-5 h-5" /> {noText}
           </Button>
         </div>
       </div>

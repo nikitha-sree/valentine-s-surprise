@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Heart } from "lucide-react";
+import { Heart, KeyRound, Unlock } from "lucide-react";
 
 interface SplashScreenProps {
   onUnlock: () => void;
@@ -32,8 +32,8 @@ const SplashScreen = ({ onUnlock, passphrase }: SplashScreenProps) => {
         }`}
       >
         <Heart className="w-16 h-16 text-primary animate-pulse-glow fill-primary" />
-        <h1 className="text-3xl font-bold text-foreground text-center">
-          Enter the Secret Phrase 💌
+        <h1 className="text-3xl font-bold text-foreground text-center flex items-center gap-2 justify-center">
+          <KeyRound className="w-7 h-7 text-accent" /> Enter the Secret Phrase
         </h1>
         <p className="text-muted-foreground text-center text-sm">
           Only the chosen one knows the magic words...
@@ -53,7 +53,7 @@ const SplashScreen = ({ onUnlock, passphrase }: SplashScreenProps) => {
           />
           {error && (
             <p className="text-destructive text-sm text-center">
-              Nope! Try again, sweetie 😘
+              Nope! Try again, sweetie
             </p>
           )}
           <Button
@@ -61,7 +61,7 @@ const SplashScreen = ({ onUnlock, passphrase }: SplashScreenProps) => {
             size="lg"
             className="w-full text-lg py-6 animate-pulse-glow"
           >
-            Unlock 💕
+            <Unlock className="w-5 h-5" /> Unlock
           </Button>
         </form>
       </div>
