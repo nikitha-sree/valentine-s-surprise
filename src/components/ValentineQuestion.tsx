@@ -8,20 +8,20 @@ interface ValentineQuestionProps {
 
 type TrickMode =
   | "runaway"
-  | "dropdown"
+  // | "dropdown"
   | "tiny"
   | "expand-yes"
-  | "disappear"
+  // | "disappear"
   | "spin-away"
   | "swap-text"
   | "melt";
 
 const ALL_TRICKS: TrickMode[] = [
   "runaway",
-  "dropdown",
+  // "dropdown",
   "tiny",
   "expand-yes",
-  "disappear",
+  // "disappear",
   "spin-away",
   "swap-text",
   "melt",
@@ -155,10 +155,10 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
         setNoPosition((prev) => clampPositionToViewport(getRandomPosition()));
         setYesScale((prev) => Math.min(prev + 0.15, 4));
         break;
-      case "dropdown":
-        setNoPosition((prev) => clampPositionToViewport({ x: 0, y: Math.min(300, window.innerHeight - 200) }));
-        setYesScale((prev) => Math.min(prev + 0.15, 4));
-        break;
+      // case "dropdown":
+      //   setNoPosition((prev) => clampPositionToViewport({ x: 0, y: Math.min(300, window.innerHeight - 200) }));
+      //   setYesScale((prev) => Math.min(prev + 0.15, 4));
+      //   break;
       case "tiny":
         setNoScale((prev) => prev * 0.4);
         setYesScale((prev) => Math.min(prev * 1.3, 3));
@@ -167,15 +167,15 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
         setYesScale((prev) => Math.min(prev * 1.5, 4));
         setNoScale((prev) => prev * 0.3);
         break;
-      case "disappear":
-        setNoOpacity(0);
-        setYesScale((prev) => Math.min(prev + 0.15, 4));
-        setTimeout(() => {
-          setNoPosition((prev) => clampPositionToViewport(getRandomPosition()));
-          setNoOpacity(1);
-          setNoScale(0.6);
-        }, 800);
-        break;
+      // case "disappear":
+      //   setNoOpacity(0);
+      //   setYesScale((prev) => Math.min(prev + 0.15, 4));
+      //   setTimeout(() => {
+      //     setNoPosition((prev) => clampPositionToViewport(getRandomPosition()));
+      //     setNoOpacity(1);
+      //     setNoScale(0.6);
+      //   }, 800);
+      //   break;
       case "spin-away":
         setNoRotation((prev) => prev + 720);
         setNoPosition((prev) => clampPositionToViewport(getRandomPosition()));
