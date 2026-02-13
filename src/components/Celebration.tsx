@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { PartyPopper, Heart, Camera } from "lucide-react";
+import picImage from "./pic.png";
 
 interface ConfettiPiece {
   id: number;
@@ -67,10 +68,10 @@ const Celebration = () => {
           I knew you'd say yes! Happy Valentine's Day, my love!
         </p>
 
-        {/* Placeholder photo */}
+        {/* Photo */}
         <div className="w-72 h-72 rounded-2xl overflow-hidden border-4 border-primary/30 shadow-lg shadow-primary/20 mt-4 animate-bounce-in" style={{ animationDelay: "0.4s" }}>
           <img
-            src="/pic.png"
+            src={picImage}
             alt="Us together"
             className="w-full h-full object-cover bg-secondary"
           />
