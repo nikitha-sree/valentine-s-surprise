@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { PartyPopper, Heart, Camera } from "lucide-react";
 
 interface ConfettiPiece {
   id: number;
@@ -58,12 +59,12 @@ const Celebration = () => {
           show ? "opacity-100 scale-100" : "opacity-0 scale-50"
         }`}
       >
-        <span className="text-8xl animate-bounce-in">🎉</span>
-        <h1 className="text-4xl md:text-5xl font-bold text-foreground text-center">
-          Yaaay! 💕
+        <PartyPopper className="w-20 h-20 text-accent animate-bounce-in" />
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground text-center flex items-center gap-2 justify-center">
+          Yaaay! <Heart className="w-8 h-8 text-primary fill-primary" />
         </h1>
         <p className="text-xl text-muted-foreground text-center">
-          I knew you'd say yes! Happy Valentine's Day, my love! 🥰
+          I knew you'd say yes! Happy Valentine's Day, my love!
         </p>
 
         {/* Placeholder photo */}
@@ -74,8 +75,8 @@ const Celebration = () => {
             className="w-full h-full object-cover bg-secondary"
           />
         </div>
-        <p className="text-sm text-muted-foreground italic">
-          Our photo goes here 📸
+        <p className="text-sm text-muted-foreground italic flex items-center gap-1">
+          <Camera className="w-4 h-4" /> Our photo goes here
         </p>
       </div>
     </div>

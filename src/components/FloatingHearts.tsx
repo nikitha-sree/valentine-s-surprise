@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { Heart } from "lucide-react";
 
-interface Heart {
+interface FloatingHeart {
   id: number;
   left: number;
   size: number;
@@ -10,10 +11,10 @@ interface Heart {
 }
 
 const FloatingHearts = () => {
-  const [hearts, setHearts] = useState<Heart[]>([]);
+  const [hearts, setHearts] = useState<FloatingHeart[]>([]);
 
   useEffect(() => {
-    const initial: Heart[] = Array.from({ length: 15 }, (_, i) => ({
+    const initial: FloatingHeart[] = Array.from({ length: 15 }, (_, i) => ({
       id: i,
       left: Math.random() * 100,
       size: Math.random() * 20 + 10,
@@ -48,13 +49,12 @@ const FloatingHearts = () => {
           className="absolute text-heart animate-float-heart"
           style={{
             left: `${heart.left}%`,
-            fontSize: `${heart.size}px`,
             animationDelay: `${heart.delay}s`,
             animationDuration: `${heart.duration}s`,
             opacity: heart.opacity,
           }}
         >
-          ♥
+          <Heart className="fill-current" style={{ width: heart.size, height: heart.size }} />
         </div>
       ))}
     </div>
