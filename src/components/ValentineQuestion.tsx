@@ -57,39 +57,106 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
   const [noSkewY, setNoSkewY] = useState(0);
   const [visible, setVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const noButtonRef = useRef<HTMLButtonElement>(null);
+  const originalPositionRef = useRef<{ x: number; y: number } | null>(null);
+  const originalSizeRef = useRef<{ width: number; height: number } | null>(null);
 
   const currentTrick = trickOrder[trickIndex % trickOrder.length];
+
+  const clampPositionToViewport = useCallback((position: { x: number; y: number }) => {
+    if (!noButtonRef.current || !originalPositionRef.current || !originalSizeRef.current) return position;
+    
+    const padding = 20;
+    
+    // Get button dimensions (accounting for scale)
+    const btnWidth = originalSizeRef.current.width * noScale;
+    const btnHeight = originalSizeRef.current.height * noScale;
+    
+    // Calculate absolute position (original + translate offset)
+    const absoluteX = originalPositionRef.current.x + position.x;
+    const absoluteY = originalPositionRef.current.y + position.y;
+    
+    // Calculate viewport bounds
+    const minX = padding;
+    const minY = padding;
+    const maxX = window.innerWidth - btnWidth - padding;
+    const maxY = window.innerHeight - btnHeight - padding;
+    
+    // Clamp the absolute position
+    const clampedX = Math.max(minX, Math.min(maxX, absoluteX));
+    const clampedY = Math.max(minY, Math.min(maxY, absoluteY));
+    
+    // Return relative position (clamped absolute - original)
+    return {
+      x: clampedX - originalPositionRef.current.x,
+      y: clampedY - originalPositionRef.current.y,
+    };
+  }, [noScale]);
+
+  const getRandomPosition = useCallback(() => {
+    if (!noButtonRef.current || !originalPositionRef.current || !originalSizeRef.current) return { x: 0, y: 0 };
+    
+    const padding = 20;
+    const btnWidth = originalSizeRef.current.width * noScale;
+    const btnHeight = originalSizeRef.current.height * noScale;
+    
+    const minX = padding;
+    const minY = padding;
+    const maxX = window.innerWidth - btnWidth - padding;
+    const maxY = window.innerHeight - btnHeight - padding;
+    
+    // Generate random absolute position
+    const targetAbsoluteX = Math.max(minX, Math.min(maxX, Math.random() * (maxX - minX) + minX));
+    const targetAbsoluteY = Math.max(minY, Math.min(maxY, Math.random() * (maxY - minY) + minY));
+    
+    // Convert to relative position
+    return {
+      x: targetAbsoluteX - originalPositionRef.current.x,
+      y: targetAbsoluteY - originalPositionRef.current.y,
+    };
+  }, [noScale]);
 
   useEffect(() => {
     setTimeout(() => setVisible(true), 100);
   }, []);
 
-  const getRandomPosition = useCallback(() => {
-    if (!containerRef.current) return { x: 0, y: 0 };
-    const btn = containerRef.current.querySelector('[data-no-btn]') as HTMLElement;
-    if (!btn) return { x: 0, y: 0 };
-    const rect = btn.getBoundingClientRect();
-    const padding = 20;
-    const maxX = window.innerWidth - rect.width - padding;
-    const maxY = window.innerHeight - rect.height - padding;
-    const targetX = Math.random() * maxX + padding;
-    const targetY = Math.random() * maxY + padding;
-    return {
-      x: targetX - rect.left,
-      y: targetY - rect.top,
+  // Capture original button position and size
+  useEffect(() => {
+    if (noButtonRef.current && !originalPositionRef.current) {
+      const rect = noButtonRef.current.getBoundingClientRect();
+      originalPositionRef.current = { x: rect.left, y: rect.top };
+      originalSizeRef.current = { width: rect.width, height: rect.height };
+    }
+  }, [visible]);
+
+  // Ensure button stays within viewport when scale changes
+  useEffect(() => {
+    if (originalPositionRef.current) {
+      setNoPosition((prev) => clampPositionToViewport(prev));
+    }
+  }, [noScale, clampPositionToViewport]);
+
+  // Ensure button stays within viewport on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (originalPositionRef.current) {
+        setNoPosition((prev) => clampPositionToViewport(prev));
+      }
     };
-  }, []);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [clampPositionToViewport]);
 
   const handleNoInteraction = useCallback(() => {
     const trick = trickOrder[trickIndex % trickOrder.length];
 
     switch (trick) {
       case "runaway":
-        setNoPosition(getRandomPosition());
+        setNoPosition((prev) => clampPositionToViewport(getRandomPosition()));
         setYesScale((prev) => Math.min(prev + 0.15, 4));
         break;
       case "dropdown":
-        setNoPosition({ x: 0, y: 300 });
+        setNoPosition((prev) => clampPositionToViewport({ x: 0, y: Math.min(300, window.innerHeight - 200) }));
         setYesScale((prev) => Math.min(prev + 0.15, 4));
         break;
       case "tiny":
@@ -104,14 +171,14 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
         setNoOpacity(0);
         setYesScale((prev) => Math.min(prev + 0.15, 4));
         setTimeout(() => {
-          setNoPosition(getRandomPosition());
+          setNoPosition((prev) => clampPositionToViewport(getRandomPosition()));
           setNoOpacity(1);
           setNoScale(0.6);
         }, 800);
         break;
       case "spin-away":
         setNoRotation((prev) => prev + 720);
-        setNoPosition(getRandomPosition());
+        setNoPosition((prev) => clampPositionToViewport(getRandomPosition()));
         setNoScale((prev) => prev * 0.7);
         setYesScale((prev) => Math.min(prev + 0.15, 4));
         break;
@@ -122,13 +189,13 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
       case "melt":
         setNoSkewY(40);
         setNoScale((prev) => prev * 0.5);
-        setNoPosition((prev) => ({ ...prev, y: prev.y + 100 }));
+        setNoPosition((prev) => clampPositionToViewport({ ...prev, y: prev.y + 100 }));
         setYesScale((prev) => Math.min(prev + 0.15, 4));
         setTimeout(() => setNoSkewY(0), 600);
         break;
     }
     setTrickIndex((prev) => prev + 1);
-  }, [trickIndex, trickOrder, getRandomPosition]);
+  }, [trickIndex, trickOrder, getRandomPosition, clampPositionToViewport]);
 
   return (
     <div
@@ -161,6 +228,7 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
           </Button>
 
           <Button
+            ref={noButtonRef}
             variant="outline"
             size="lg"
             data-no-btn

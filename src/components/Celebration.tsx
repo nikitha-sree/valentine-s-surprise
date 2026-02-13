@@ -76,7 +76,7 @@ const Celebration = () => {
           />
         </div>
         <p className="text-sm text-muted-foreground italic flex items-center gap-1">
-          <Camera className="w-4 h-4" /> Our photo goes here
+          <Camera className="w-4 h-4" /> 
         </p>
       </div>
     </div>
