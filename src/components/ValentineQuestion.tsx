@@ -78,9 +78,11 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
     switch (trick) {
       case "runaway":
         setNoPosition(getRandomPosition());
+        setYesScale((prev) => Math.min(prev + 0.15, 4));
         break;
       case "dropdown":
         setNoPosition({ x: 0, y: 300 });
+        setYesScale((prev) => Math.min(prev + 0.15, 4));
         break;
       case "tiny":
         setNoScale((prev) => prev * 0.4);
@@ -92,6 +94,7 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
         break;
       case "disappear":
         setNoOpacity(0);
+        setYesScale((prev) => Math.min(prev + 0.15, 4));
         setTimeout(() => {
           setNoPosition(getRandomPosition());
           setNoOpacity(1);
@@ -102,6 +105,7 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
         setNoRotation((prev) => prev + 720);
         setNoPosition(getRandomPosition());
         setNoScale((prev) => prev * 0.7);
+        setYesScale((prev) => Math.min(prev + 0.15, 4));
         break;
       case "swap-text":
         setNoText(SWAP_TEXTS[Math.floor(Math.random() * SWAP_TEXTS.length)]);
@@ -111,6 +115,7 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
         setNoSkewY(40);
         setNoScale((prev) => prev * 0.5);
         setNoPosition((prev) => ({ ...prev, y: prev.y + 100 }));
+        setYesScale((prev) => Math.min(prev + 0.15, 4));
         setTimeout(() => setNoSkewY(0), 600);
         break;
     }
@@ -141,7 +146,7 @@ const ValentineQuestion = ({ onYes }: ValentineQuestionProps) => {
           <Button
             onClick={onYes}
             size="lg"
-            className="text-xl px-10 py-7 animate-pulse-glow transition-transform duration-300"
+            className="text-xl px-10 py-7 transition-transform duration-300"
             style={{ transform: `scale(${yesScale})`, zIndex: 10 }}
           >
             Yes! 💖

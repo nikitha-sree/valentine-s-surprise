@@ -25,7 +25,7 @@ const SplashScreen = ({ onUnlock, passphrase }: SplashScreenProps) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-6 relative z-10">
+    <div className="flex flex-col items-center justify-center min-h-screen px-6 relative z-10 pb-[30vh]">
       <div
         className={`flex flex-col items-center gap-6 max-w-sm w-full ${
           shake ? "animate-shake" : ""
